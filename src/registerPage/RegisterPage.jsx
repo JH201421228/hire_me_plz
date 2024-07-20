@@ -8,14 +8,35 @@ import { useDispatch } from "react-redux";
 import { setUser } from "../store/userSlice";
 import styled from "styled-components";
 
+const MasterContainer = styled.div`
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgb(218, 218, 220);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+`
+
 const Container = styled.div`
     max-width: 600px;
     margin: 0 auto;
     padding: 20px;
 `;
 
+const ImgBox = styled.img`
+    max-width: 500px;
+    margin: auto;
+    display: block;
+`
+
 const Title = styled.h3`
+    margin-top: 1rem;
     text-align: center;
+    font-weight: bold;
+    color: rgb(80, 80, 80);
 `;
 
 const Form = styled.form`
@@ -25,6 +46,8 @@ const Form = styled.form`
 
 const Label = styled.label`
     margin-top: 10px;
+    font-weight: bold;
+    color: rgb(80, 80, 80);
 `;
 
 const Input = styled.input`
@@ -53,10 +76,21 @@ const SubmitButton = styled.input`
 `;
 
 const StyledLink = styled(Link)`
-    color: grey;
+    text-align: center;
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+
     text-decoration: none;
-    margin-top: 10px;
-    display: inline-block;
+
+    &:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+    }
 `;
 
 const RegisterPage = () => {
@@ -100,64 +134,67 @@ const RegisterPage = () => {
     };
 
     return (
-        <Container>
-            <Title>Register</Title>
-            <Form onSubmit={handleSubmit(onSubmit)}>
-                <Label htmlFor='email'>Email</Label>
-                <Input
-                    name='email'
-                    type='email'
-                    id='email'
-                    {...register("email", {
-                        required: "This email field is required",
-                        pattern: {
-                            value: /^\S+@\S+$/i,
-                            message: "Please enter a valid email address"
-                        }
-                    })}
-                />
-                {errors.email && <ErrorMessage>{errors.email.message}</ErrorMessage>}
+        <MasterContainer>
+            <Container>
+                <ImgBox src="/images/iwbtd2.jpg" />
+                <Title>Sign Up</Title>
+                <Form onSubmit={handleSubmit(onSubmit)}>
+                    <Label htmlFor='email'>Email</Label>
+                    <Input
+                        name='email'
+                        type='email'
+                        id='email'
+                        {...register("email", {
+                            required: "This email field is required",
+                            pattern: {
+                                value: /^\S+@\S+$/i,
+                                message: "Please enter a valid email address"
+                            }
+                        })}
+                    />
+                    {errors.email && <ErrorMessage>{errors.email.message}</ErrorMessage>}
 
-                <Label htmlFor="name">Name</Label>
-                <Input
-                    type="text"
-                    name='name'
-                    id='name'
-                    {...register("name", {
-                        required: "This name field is required",
-                        maxLength: {
-                            value: 10,
-                            message: "Your input exceed maximum length"
-                        }
-                    })}
-                />
-                {errors.name && <ErrorMessage>{errors.name.message}</ErrorMessage>}
+                    <Label htmlFor="name">Name</Label>
+                    <Input
+                        type="text"
+                        name='name'
+                        id='name'
+                        {...register("name", {
+                            required: "This name field is required",
+                            maxLength: {
+                                value: 10,
+                                message: "Your input exceed maximum length"
+                            }
+                        })}
+                    />
+                    {errors.name && <ErrorMessage>{errors.name.message}</ErrorMessage>}
 
-                <Label htmlFor="password">Password</Label>
-                <Input
-                    name='password'
-                    type="password"
-                    id='password'
-                    {...register("password", {
-                        required: "This password field is required",
-                        minLength: {
-                            value: 6,
-                            message: "Password must have at least 6 characters"
-                        },
-                        pattern: {
-                            value: /(?=.*[!@#$%^&*])/,
-                            message: "Password must contain at least one special character"
-                        }
-                    })}
-                />
-                {errors.password && <ErrorMessage>{errors.password.message}</ErrorMessage>}
+                    <Label htmlFor="password">Password</Label>
+                    <Input
+                        name='password'
+                        type="password"
+                        id='password'
+                        {...register("password", {
+                            required: "This password field is required",
+                            minLength: {
+                                value: 6,
+                                message: "Password must have at least 6 characters"
+                            },
+                            pattern: {
+                                value: /(?=.*[!@#$%^&*])/,
+                                message: "Password must contain at least one special character"
+                            }
+                        })}
+                    />
+                    {errors.password && <ErrorMessage>{errors.password.message}</ErrorMessage>}
 
-                {errorFromSubmit && <ErrorMessage>{errorFromSubmit}</ErrorMessage>}
+                    {errorFromSubmit && <ErrorMessage>{errorFromSubmit}</ErrorMessage>}
 
-                <SubmitButton type="submit" disabled={loading} value="Register" />
-                <StyledLink to={'/login'}>로그인</StyledLink>
-            </Form>
-        </Container>
+                    <SubmitButton type="submit" disabled={loading} value="Sign Up" />
+                    <StyledLink to={'/login'}>Sign In</StyledLink>
+                </Form>
+            </Container>
+        </MasterContainer>
     );
 };
 

@@ -12,3 +12,6 @@ Currently, two official plugins are available:
 - 프로젝트 생성
 - .env파일 생성
 - firebase 연결 및 배포
+
+### 20240720
+- 로그인, 회원가입 페이지 css 수정

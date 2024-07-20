@@ -1,71 +1,169 @@
 import React, { useState } from "react";
-import app, { db } from "../firebase";
+import app from "../firebase";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { setUser } from "../store/userSlice";
 import { useForm } from "react-hook-form";
+import styled from "styled-components";
 
+const MasterContainer = styled.div`
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgb(218, 218, 220);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+`;
+
+const Container = styled.div`
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+`;
+
+const ImgBox = styled.img`
+    max-width: 500px;
+    margin: auto;
+    display: block;
+`;
+
+const Title = styled.h3`
+    margin-top: 1rem;
+    text-align: center;
+    font-weight: bold;
+    color: rgb(80, 80, 80);
+`;
+
+const Form = styled.form`
+    display: flex;
+    flex-direction: column;
+`;
+
+const Label = styled.label`
+    margin-top: 10px;
+    font-weight: bold;
+    color: rgb(80, 80, 80);
+`;
+
+const Input = styled.input`
+    padding: 8px;
+    margin-top: 5px;
+`;
+
+const ErrorMessage = styled.p`
+    color: red;
+    font-size: 12px;
+`;
+
+const SubmitButton = styled.input`
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+
+    &:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+    }
+`;
+
+const StyledLink = styled(Link)`
+    text-align: center;
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-decoration: none;
+
+    &:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+    }
+`;
 
 const LoginPage = () => {
-    const [loading, setLoading] = useState(false)
+    const [loading, setLoading] = useState(false);
+    const [errorFromSubmit, setErrorFromSubmit] = useState("");
 
-    const [errorFromSubmit, setErrorFromSubmit] =useState("")
+    const auth = getAuth(app);
 
-    const auth = getAuth(app)
+    const { register, formState: { errors }, handleSubmit } = useForm();
+    const dispatch = useDispatch();
 
-    const {register, watch, formState:{errors}, handleSubmit} = useForm()
-
-
-    const onSubmit = async(data) => {
+    const onSubmit = async (data) => {
         try {
-            setLoading(true)
-            await signInWithEmailAndPassword(auth, data.email, data.password)
-        }
-        catch (error) {
-            console.error(error)
-            setErrorFromSubmit(error.message)
+            setLoading(true);
+            const userCredential = await signInWithEmailAndPassword(auth, data.email, data.password);
+            // 사용자 정보를 Redux 상태로 설정
+            dispatch(setUser({
+                uid: userCredential.user.uid,
+                displayName: userCredential.user.displayName,
+                email: userCredential.user.email,
+            }));
+        } catch (error) {
+            console.error(error);
+            setErrorFromSubmit(error.message);
             setTimeout(() => {
-                setErrorFromSubmit("")
-            }, 3000)
+                setErrorFromSubmit("");
+            }, 3000);
+        } finally {
+            setLoading(false);
         }
-        finally {
-            setLoading(false)
-        }
-    }
-    
-  return (
-    <div className='container'>
-        <div style={{ textAlign: 'center' }}>
-            <h3>Log In</h3>
-        </div>
-        <form onSubmit={handleSubmit(onSubmit)}>
-            <label htmlFor='email'>Email</label>
-            <input 
-                name='email'
-                type='email'
-                id='email'
-                {...register("email", {required: true, pattern: /^\S+@\S+$/i})}
-            />
-            {errors.email && <p>This email field is required</p>}
+    };
 
-            <label htmlFor="password">Password</label>
-            <input 
-                name='password'
-                type="password" 
-                id='password'
-                {...register("password", {required: true, minLength: 6})}
-            />
-            {errors.password && errors.password.type === "required" && <p>This password field is required</p>}
-            {errors.password && errors.password.type === "maxLength" && <p>Password must have at least 6 characters</p>}
+    return (
+        <MasterContainer>
+            <Container>
+                <ImgBox src="/images/iwbtd2.jpg" />
+                <Title>Sign In</Title>
+                <Form onSubmit={handleSubmit(onSubmit)}>
+                    <Label htmlFor='email'>Email</Label>
+                    <Input
+                        name='email'
+                        type='email'
+                        id='email'
+                        {...register("email", {
+                            required: "This email field is required",
+                            pattern: {
+                                value: /^\S+@\S+$/i,
+                                message: "Please enter a valid email address"
+                            }
+                        })}
+                    />
+                    {errors.email && <ErrorMessage>{errors.email.message}</ErrorMessage>}
 
-            {errorFromSubmit && <p>{errorFromSubmit}</p>}
+                    <Label htmlFor="password">Password</Label>
+                    <Input
+                        name='password'
+                        type="password"
+                        id='password'
+                        {...register("password", {
+                            required: "This password field is required",
+                            minLength: {
+                                value: 6,
+                                message: "Password must have at least 6 characters"
+                            }
+                        })}
+                    />
+                    {errors.password && <ErrorMessage>{errors.password.message}</ErrorMessage>}
 
-            <input type="submit" disabled = {loading} />
-            <Link style={{color: 'grey', textDecoration: 'none'}} to={'/register'}>회원가입</Link>
-        </form>
-    </div>
-  )
-}
+                    {errorFromSubmit && <ErrorMessage>{errorFromSubmit}</ErrorMessage>}
 
-export default LoginPage
+                    <SubmitButton type="submit" disabled={loading} value="Sign In" />
+                    <StyledLink to={'/register'}>Sign Up</StyledLink>
+                </Form>
+            </Container>
+        </MasterContainer>
+    );
+};
+
+export default LoginPage;
