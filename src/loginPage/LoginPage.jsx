@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { useForm } from "react-hook-form";
 import styled from "styled-components";
+import { setUser } from "../store/userSlice";
 
 const MasterContainer = styled.div`
     position: fixed;
@@ -104,6 +105,7 @@ const LoginPage = () => {
             setLoading(true);
             const userCredential = await signInWithEmailAndPassword(auth, data.email, data.password);
             // 사용자 정보를 Redux 상태로 설정
+
             dispatch(setUser({
                 uid: userCredential.user.uid,
                 displayName: userCredential.user.displayName,

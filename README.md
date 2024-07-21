@@ -15,3 +15,6 @@ Currently, two official plugins are available:
 
 ### 20240720
 - 로그인, 회원가입 페이지 css 수정
+
+### 20240721
+- 메인페이지 css수정

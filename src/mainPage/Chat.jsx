@@ -2,8 +2,69 @@ import React, { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getDatabase, ref, push, onValue } from "firebase/database";
 import { getAuth, signOut } from "firebase/auth";
+import styled from "styled-components";
 import app from "../firebase";
-import { clearUser } from "../store/userSlice"; 
+import { clearUser } from "../store/userSlice";
+
+const ChatContainer = styled.div`
+  width: 50%;
+  min-width: 500px;
+  height: 450px;
+  border: 5px solid rgb(80, 80, 80);
+  border-radius: 5px;
+  padding: 1rem;
+  margin: 2rem;
+  background-color: white;
+`;
+
+const ChatMessages = styled.div`
+  overflow-y: auto;
+  height: 350px;
+  margin-bottom: 1rem;
+  padding: 0 0.5rem;
+`;
+
+const MessageInputContainer = styled.div`
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+`;
+
+const MessageInput = styled.input`
+  width: 75%;
+  padding: 0.5rem;
+  border-radius: 5px;
+`;
+
+const SendMessageButton = styled.button`
+    border-radius: 5px;
+    border: none;
+    color: white;
+    background-color: #007bff;
+  padding: 0.5rem 1rem;
+`;
+
+const HideeButton = styled.button`
+    border-radius: 5px;
+    border: none;
+    color: white;
+    background-color: #007bff;
+  padding: 0.5rem 1rem;
+`;
+
+const ButtonContainer = styled.div`
+    margin: 2rem;
+`
+
+const LogoutButton = styled.button`
+  padding: 0.5rem 1rem;
+`;
+
+const MessageContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+`;
 
 const Chat = () => {
     const auth = getAuth(app);
@@ -13,7 +74,9 @@ const Chat = () => {
     const [chats, setChats] = useState([]);
     const messageEndRef = useRef(null)
     const currentTime = new Date().toISOString()
-    const [beforeUser, setBeforeUser] = useState("")
+    const [hide, setHide] = useState(false)
+    const user = useSelector(state => state.user)
+
     useEffect(() => {
         // Firebase Realtime Database에서 채팅 메시지를 가져와서 설정합니다.
         const db = getDatabase();
@@ -29,8 +92,10 @@ const Chat = () => {
     }, []);
 
     useEffect(() => {
-        messageEndRef.current.scrollIntoView({ behavior: 'smooth' })
-    })
+        if (messageEndRef.current) {
+            messageEndRef.current.scrollIntoView({ behavior: 'smooth' })
+        }
+    });
 
     const handleLogout = () => {
         signOut(auth)
@@ -64,43 +129,44 @@ const Chat = () => {
     }
 
     return (
-        <div className="container">
-            <div style={{ width: '50%', minWidth: '500px', height: '500px', border: '5px solid black', borderRadius: '20px', padding: '1rem' }}>
-                {/* 채팅 메시지 출력 */}
-                <div style={{ overflowY: 'scroll', height: '400px', marginBottom: '1rem', width: "auto", overflowX: 'hidden' }}>
-                    {chats.map((chat, index) => (
-                        <div key={index}>
-                            {chat.sender === userInfo.currentUser.uid ?
-                                <div className="d-flex flex-column" style={{ width: "100%" }}>
+        <>
+            {hide ?
+                <ButtonContainer>
+                    <HideeButton onClick={() => setHide(!hide)} >Show</HideeButton>
+                </ButtonContainer>
+                :
+                <ChatContainer>
+                    {/* 채팅 메시지 출력 */}
+                    <ChatMessages>
+                        {chats.map((chat, index) => (
+                            <MessageContainer key={index}>
+                                {chat.sender === userInfo.currentUser.uid ?
                                     <div style={{ alignSelf: "flex-end" }}>{chat.message}</div>
-                                </div>
-                                :
-                                <div className="d-flex flex-column" style={{ width: "100%" }}>
+                                    :
                                     <div style={{ alignSelf: "flex-start" }}>[{chat.displayName}] {chat.message}</div>
-                                </div>
-                            }
-                        </div>))}
-                    <div ref={messageEndRef}></div>
-                </div>
-                {/* 채팅 입력 필드 */}
-                <div style={{ display: 'flex', justifyContent: 'space-around' }}>
-                    <div className="d-flex gap-2" style={{ width: "100%" }}>
-                        <input
-                            className="px-2"
-                            style={{ width: "70%" }}
+                                }
+                            </MessageContainer>
+                        ))}
+                        <div ref={messageEndRef}></div>
+                    </ChatMessages>
+                    {/* 채팅 입력 필드 */}
+                    <MessageInputContainer>
+                        <MessageInput
                             type="text"
+                            
                             value={message}
                             onChange={(e) => setMessage(e.target.value)}
                             onKeyUp={(e) => enterSendMessage(e)}
                         />
                         {/* 채팅 전송 버튼 */}
-                        <button onClick={sendMessage}>Send</button>
-                    </div>
-                    {/* 로그아웃 버튼 */}
-                    <button onClick={handleLogout}>logout</button>
-                </div>
-            </div>
-        </div>
+                        <SendMessageButton onClick={sendMessage}>Send</SendMessageButton>
+                        {/* 로그아웃 버튼 */}
+                        {/* <LogoutButton onClick={handleLogout}>Logout</LogoutButton> */}
+                        <HideeButton onClick={() => setHide(!hide)} >Hide</HideeButton>
+                    </MessageInputContainer>
+                </ChatContainer>
+            }
+        </>
     );
 };
 
