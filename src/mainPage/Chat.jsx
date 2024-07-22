@@ -153,7 +153,7 @@ const Chat = () => {
                     <MessageInputContainer>
                         <MessageInput
                             type="text"
-                            
+                            placeholder="Chat Here"
                             value={message}
                             onChange={(e) => setMessage(e.target.value)}
                             onKeyUp={(e) => enterSendMessage(e)}

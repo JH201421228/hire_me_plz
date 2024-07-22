@@ -18,3 +18,6 @@ Currently, two official plugins are available:
 
 ### 20240721
 - 메인페이지 css수정
+
+### 20240722
+- Quiz Alone 페이지 로직 구현

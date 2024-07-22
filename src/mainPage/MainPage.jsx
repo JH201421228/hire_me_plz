@@ -4,6 +4,7 @@ import Chat from "./Chat";
 import SidePanel from "./SidePanel";
 import styled from "styled-components";
 import RightPanel from "./RightPanel";
+import Upload from "../components/Upload";
 
 const MasterContainer = styled.div`
     position: fixed;
@@ -44,6 +45,7 @@ const MainPage = () => {
                 <Chat />
                 <RightPanel />
             </MainContainer>
+            {/* <Upload/> */}
         </MasterContainer>
     )
 }

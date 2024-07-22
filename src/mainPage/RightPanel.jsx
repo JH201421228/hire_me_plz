@@ -1,10 +1,11 @@
 import React from 'react'
 import styled from 'styled-components'
 import Ranking from '../components/Ranking';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { clearUser } from '../store/userSlice';
 import { getAuth, signOut } from 'firebase/auth';
 import app from '../firebase';
+import { useNavigate } from 'react-router-dom';
 
 const MasterContainer = styled.div`
   width: 40%;
@@ -65,6 +66,8 @@ const LogoutButton = styled.button`
 const RightPanel = () => {
     const auth = getAuth(app);
     const dispatch = useDispatch()
+    const navigate = useNavigate()
+    const userInfo = useSelector(state => state.user)
 
     const handleLogout = () => {
         signOut(auth)
@@ -80,7 +83,7 @@ const RightPanel = () => {
         <MasterContainer>
             <Ranking />
             <QuizContainer>
-                <QuizButton className='shadow' style={{ backgroundColor: 'rgb(255, 150, 138)' }}>
+                <QuizButton className='shadow' style={{ backgroundColor: 'rgb(255, 150, 138)' }} onClick={() => { navigate(`/quiz/${userInfo.currentUser.uid}`) }}>
                     <QuizSpan>
                         QUIZ
                     </QuizSpan>

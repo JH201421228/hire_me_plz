@@ -9,6 +9,7 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { clearUser, setUser } from "./store/userSlice";
 import MainPage from "./mainPage/MainPage";
 import RoomPage from "./roomPage/RoomPage";
+import QuizPage from "./mainPage/QuizPage";
 
 
 const App = () => {
@@ -41,6 +42,7 @@ const App = () => {
       <Route path='/register' element={<RegisterPage/>}/>
       <Route path='/' element={<MainPage/>}/>
       <Route path='/:roomId' element={<RoomPage/>}/>
+      <Route path='/quiz/:id' element={<QuizPage/>}/>
     </Routes>
   )
 }
