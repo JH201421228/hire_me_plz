@@ -1,11 +1,12 @@
-import React from 'react'
-import styled from 'styled-components'
+import React, { useEffect, useState } from 'react';
+import styled from 'styled-components';
 import Ranking from '../components/Ranking';
 import { useDispatch, useSelector } from 'react-redux';
 import { clearUser } from '../store/userSlice';
 import { getAuth, signOut } from 'firebase/auth';
 import app from '../firebase';
 import { useNavigate } from 'react-router-dom';
+import { Modal, Button } from 'react-bootstrap';
 
 const MasterContainer = styled.div`
   width: 40%;
@@ -64,10 +65,11 @@ const LogoutButton = styled.button`
 `;
 
 const RightPanel = () => {
+    const [showModal, setShowModal] = useState(false);
     const auth = getAuth(app);
-    const dispatch = useDispatch()
-    const navigate = useNavigate()
-    const userInfo = useSelector(state => state.user)
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const userInfo = useSelector(state => state.user);
 
     const handleLogout = () => {
         signOut(auth)
@@ -91,7 +93,7 @@ const RightPanel = () => {
                         ALONE
                     </TextSpan>
                 </QuizButton>
-                <QuizButton className='shadow' style={{ backgroundColor: 'rgb(203, 170, 203)' }}>
+                <QuizButton className='shadow' style={{ backgroundColor: 'rgb(203, 170, 203)' }} onClick={() => setShowModal(true)}>
                     <QuizSpan>
                         QUIZ
                     </QuizSpan>
@@ -101,8 +103,30 @@ const RightPanel = () => {
                 </QuizButton>
                 <LogoutButton onClick={handleLogout}>Log Out</LogoutButton>
             </QuizContainer>
+
+            {showModal? 
+                <Modal show={showModal} onHide={() => setShowModal(false)} centered>
+                    <Modal.Header closeButton>
+                        <Modal.Title>QUIZ TOGETHER</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <p>해당 기능은 개발중입니다...</p>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={() => setShowModal(false)}>
+                            Close
+                        </Button>
+                        {/* <Button variant="primary" onClick={handleCloseModal}>
+                            Save Changes
+                        </Button> */}
+                    </Modal.Footer>
+                </Modal>
+            :
+            <></>
+            }
+
         </MasterContainer>
-    )
+    );
 }
 
-export default RightPanel
+export default RightPanel;

@@ -5,6 +5,7 @@ import SidePanel from "./SidePanel";
 import styled from "styled-components";
 import RightPanel from "./RightPanel";
 import Upload from "../components/Upload";
+import { useNavigate } from "react-router-dom";
 
 const MasterContainer = styled.div`
     position: fixed;
@@ -17,7 +18,7 @@ const MasterContainer = styled.div`
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    overflow-y: auto;
+    overflow: auto;
 `;
 
 const LogoBar = styled.img`
@@ -36,6 +37,14 @@ const MainContainer = styled.div`
 
 const MainPage = () => {
     const user = useSelector(state => state.user)
+    const navigate = useNavigate()
+
+    useEffect(() => {
+        if (Object.keys(user.currentUser).length === 0) {
+            navigate('/login')
+        }
+    }, [])
+
     return (
         <MasterContainer>
             <LogoBar src="/images/iwbtd2.jpg" />

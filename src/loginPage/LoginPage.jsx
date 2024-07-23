@@ -17,6 +17,7 @@ const MasterContainer = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
+    overflow: auto;
 `;
 
 const Container = styled.div`
@@ -24,6 +25,14 @@ const Container = styled.div`
     margin: 0 auto;
     padding: 20px;
 `;
+
+const TopWord = styled.p`
+    color: #007bff;
+    text-align: center;
+    font-weight: bold;
+    font-size: 3rem;
+    text-shadow: 3px 3px rgb(80, 80, 80);
+`
 
 const ImgBox = styled.img`
     max-width: 500px;
@@ -125,6 +134,7 @@ const LoginPage = () => {
     return (
         <MasterContainer>
             <Container>
+                <TopWord>PLAY QUIZ GAMES</TopWord>
                 <ImgBox src="/images/iwbtd2.jpg" />
                 <Title>Sign In</Title>
                 <Form onSubmit={handleSubmit(onSubmit)}>

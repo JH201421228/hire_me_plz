@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { createUserWithEmailAndPassword, getAuth, updateProfile } from "firebase/auth";
 import app, { db } from "../firebase";
 import { set, ref } from "firebase/database";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { setUser } from "../store/userSlice";
@@ -18,7 +18,8 @@ const MasterContainer = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-`
+    overflow: auto;
+`;
 
 const Container = styled.div`
     max-width: 600px;
@@ -26,11 +27,19 @@ const Container = styled.div`
     padding: 20px;
 `;
 
+const TopWord = styled.p`
+    color: #007bff;
+    text-align: center;
+    font-weight: bold;
+    font-size: 3rem;
+    text-shadow: 3px 3px rgb(80, 80, 80);
+`;
+
 const ImgBox = styled.img`
     max-width: 500px;
     margin: auto;
     display: block;
-`
+`;
 
 const Title = styled.h3`
     margin-top: 1rem;
@@ -84,7 +93,6 @@ const StyledLink = styled(Link)`
     border: none;
     border-radius: 5px;
     cursor: pointer;
-
     text-decoration: none;
 
     &:disabled {
@@ -110,11 +118,16 @@ const RegisterPage = () => {
                 displayName: data.name,
             });
 
-            console.log(createUser);
-            console.log(auth.currentUser);
+            // console.log(createUser);
+            // console.log(auth.currentUser);
 
-            set(ref(db, `users/${createUser.user.uid}`), {
+            await set(ref(db, `users/${createUser.user.uid}`), {
                 name: createUser.user.displayName,
+            });
+
+            await set(ref(db, `rank/${createUser.user.uid}`), {
+                name: createUser.user.displayName,
+                score: 0,
             });
 
             dispatch(setUser({
@@ -123,7 +136,7 @@ const RegisterPage = () => {
             }));
 
         } catch (error) {
-            console.error(error);
+            // console.error(error);
             setErrorFromSubmit(error.message);
             setTimeout(() => {
                 setErrorFromSubmit("");
@@ -136,6 +149,7 @@ const RegisterPage = () => {
     return (
         <MasterContainer>
             <Container>
+            <TopWord>PLAY QUIZ GAMES</TopWord>
                 <ImgBox src="/images/iwbtd2.jpg" />
                 <Title>Sign Up</Title>
                 <Form onSubmit={handleSubmit(onSubmit)}>
@@ -187,6 +201,19 @@ const RegisterPage = () => {
                         })}
                     />
                     {errors.password && <ErrorMessage>{errors.password.message}</ErrorMessage>}
+
+                    <Label htmlFor="passwordConfirm">Confirm Password</Label>
+                    <Input
+                        name='passwordConfirm'
+                        type="password"
+                        id='passwordConfirm'
+                        {...register("passwordConfirm", {
+                            required: "Please confirm your password",
+                            validate: (value) =>
+                                value === watch('password') || "The passwords do not match"
+                        })}
+                    />
+                    {errors.passwordConfirm && <ErrorMessage>{errors.passwordConfirm.message}</ErrorMessage>}
 
                     {errorFromSubmit && <ErrorMessage>{errorFromSubmit}</ErrorMessage>}
 

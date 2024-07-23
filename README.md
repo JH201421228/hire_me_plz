@@ -21,3 +21,7 @@ Currently, two official plugins are available:
 
 ### 20240722
 - Quiz Alone 페이지 로직 구현
+
+### 20240723
+- Quiz Alone 페이지 구현
+- Rank 구현
